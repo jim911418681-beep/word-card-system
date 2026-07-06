@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>四年级上册英语单词卡片</title>
+  <meta name="description" content="四年级上册英语单词学习、默写、小测验、错题本和学习进度工具">
+  <meta name="theme-color" content="#2278ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="英语单词卡">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+  <style>
+    :root {
+      --ink: #182033;
+      --muted: #677089;
+      --paper: #fffaf0;
+      --blue: #2278ff;
+      --cyan: #16b8c9;
+      --green: #20a85a;
+      --yellow: #ffbd2e;
+      --orange: #ff7a30;
+      --pink: #ff5d96;
+      --red: #f04444;
+      --purple: #7c5cff;
+      --line: rgba(24, 32, 51, .12);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 189, 46, .28), transparent 28rem),
+        radial-gradient(circle at 90% 12%, rgba(34, 120, 255, .20), transparent 24rem),
+        linear-gradient(180deg, #f6fbff 0%, #fff9e9 52%, #f8fff1 100%);
+      min-height: 100vh;
+    }
+    button, input, select { font: inherit; }
+    .app {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: max(14px, env(safe-area-inset-top)) 14px 26px;
+    }
+    header {
+      display: grid;
+      gap: 12px;
+      padding: 10px 0 12px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(18px);
+      background: rgba(246, 251, 255, .84);
+    }
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    h1 { margin: 0; font-size: clamp(22px, 5vw, 36px); letter-spacing: 0; }
+    .today {
+      color: white;
+      background: var(--orange);
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      box-shadow: 0 8px 20px rgba(255,122,48,.22);
+      white-space: nowrap;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .tab {
+      min-width: 88px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 10px 8px;
+      background: white;
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(35, 51, 87, .08);
+    }
+    .tab.active { color: white; border-color: rgba(255,255,255,.8); }
+    .tab[data-tab="study"].active { background: var(--blue); }
+    .tab[data-tab="dictation"].active { background: var(--green); }
+    .tab[data-tab="quiz"].active { background: var(--purple); }
+    .tab[data-tab="wrong"].active { background: var(--red); }
+    .tab[data-tab="progress"].active { background: var(--cyan); }
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(130px, 1fr) minmax(110px, .65fr) auto;
+      gap: 10px;
+      align-items: center;
+      background: rgba(255,255,255,.78);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    label { display: grid; gap: 5px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      min-height: 42px;
+      border: 2px solid rgba(34,120,255,.18);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+    input[type="text"] { font-size: 20px; font-weight: 800; }
+    .primary, .secondary, .danger, .option {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-weight: 900;
+      min-height: 42px;
+    }
+    .primary { background: var(--blue); color: white; }
+    .secondary { background: #edf5ff; color: #145cc8; }
+    .danger { background: #fff0f0; color: var(--red); }
+    main { padding-top: 8px; }
+    .panel { display: none; }
+    .panel.active { display: grid; gap: 12px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .word-card, .side, .box {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(35, 51, 87, .10);
+    }
+    .word-card {
+      min-height: 360px;
+      padding: clamp(18px, 4vw, 34px);
+      display: grid;
+      gap: 16px;
+      align-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-weight: 900;
+      color: white;
+      font-size: 13px;
+    }
+    .b1 { background: var(--pink); }
+    .b2 { background: var(--cyan); }
+    .b3 { background: var(--yellow); color: #5b3b00; }
+    .word {
+      font-size: clamp(44px, 12vw, 82px);
+      line-height: .98;
+      font-weight: 950;
+      color: #10244d;
+      overflow-wrap: anywhere;
+    }
+    .ipa { font-size: clamp(19px, 4vw, 28px); color: var(--purple); font-weight: 800; }
+    .meaning { font-size: clamp(22px, 5vw, 34px); font-weight: 900; }
+    .example {
+      font-size: clamp(17px, 3.8vw, 22px);
+      line-height: 1.45;
+      color: #34405f;
+      background: #f3f8ff;
+      border-left: 6px solid var(--blue);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+    .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .speak { background: var(--orange); color: white; }
+    .known { background: var(--green); color: white; }
+    .again { background: var(--yellow); color: #513500; }
+    .side { padding: 16px; display: grid; gap: 12px; align-content: start; }
+    .meter {
+      height: 16px;
+      background: #eef2fb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .meter > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--green), var(--cyan)); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .chip.on { background: #10244d; color: white; }
+    .box { padding: 18px; display: grid; gap: 14px; }
+    .question {
+      font-size: clamp(23px, 5vw, 38px);
+      font-weight: 950;
+      color: #13254f;
+    }
+    .hint {
+      font-size: clamp(20px, 5vw, 30px);
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: 0;
+    }
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .option {
+      background: white;
+      border: 2px solid #dce6ff;
+      text-align: left;
+      color: var(--ink);
+    }
+    .option.good { border-color: var(--green); background: #ecfff4; }
+    .option.bad { border-color: var(--red); background: #fff0f0; }
+    .result { min-height: 28px; font-weight: 900; color: var(--purple); }
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--line);
+      border-left: 8px solid var(--pink);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .row strong { font-size: 22px; display: block; overflow-wrap: anywhere; }
+    .row span { color: var(--muted); }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stat {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 14px;
+    }
+    .stat b { display: block; font-size: clamp(25px, 6vw, 42px); color: var(--blue); }
+    canvas { width: 100%; height: 220px; background: white; border: 1px solid var(--line); border-radius: 8px; }
+    .empty { color: var(--muted); text-align: center; padding: 28px 12px; background: rgba(255,255,255,.72); border-radius: 8px; }
+    @media (max-width: 760px) {
+      .app { padding-left: 10px; padding-right: 10px; }
+      .tabs { grid-template-columns: repeat(5, minmax(86px, 1fr)); }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar button { grid-column: 1 / -1; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .options, .stats { grid-template-columns: 1fr; }
+      .word-card { min-height: 330px; }
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="titlebar">
+        <h1>四年级上册英语单词卡片</h1>
+        <button class="today" id="todayBtn">今日任务</button>
+      </div>
+      <nav class="tabs" aria-label="功能">
+        <button class="tab active" data-tab="study">单词学习</button>
+        <button class="tab" data-tab="dictation">单词默写</button>
+        <button class="tab" data-tab="quiz">小测验</button>
+        <button class="tab" data-tab="wrong">错题本</button>
+        <button class="tab" data-tab="progress">学习进度</button>
+      </nav>
+      <section class="toolbar">
+        <label>学习单元
+          <select id="categorySelect"></select>
+        </label>
+        <label>每日数量
+          <input id="dailyInput" type="number" min="5" max="80" step="1">
+        </label>
+        <button class="primary" id="newPlanBtn">生成今日单词</button>
+      </section>
+    </header>
+
+    <main>
+      <section class="panel active" id="study">
+        <div class="hero-grid">
+          <article class="word-card">
+            <div class="badge-row">
+              <span class="badge b1" id="unitBadge"></span>
+              <span class="badge b2" id="catBadge"></span>
+              <span class="badge b3" id="posBadge"></span>
+            </div>
+            <div class="word" id="wordText"></div>
+            <div class="ipa" id="ipaText"></div>
+            <div class="meaning" id="meaningText"></div>
+            <div class="example" id="exampleText"></div>
+            <div class="card-actions">
+              <button class="primary speak" id="speakBtn">朗读</button>
+              <button class="primary known" id="knownBtn">我会了</button>
+              <button class="primary again" id="againBtn">再练一次</button>
+              <button class="secondary" id="nextBtn">下一个</button>
+            </div>
+          </article>
+          <aside class="side">
+            <strong>今日完成</strong>
+            <div class="meter"><i id="dailyMeter"></i></div>
+            <div id="dailyText"></div>
+            <strong>单元</strong>
+            <div class="chips" id="categoryChips"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="panel" id="dictation">
+        <div class="box">
+          <div class="badge-row"><span class="badge b2">根据中文和开头补全单词</span></div>
+          <div class="question" id="dictMeaning"></div>
+          <div class="hint" id="dictHint"></div>
+          <input id="dictInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="在这里输入完整英文">
+          <div class="card-actions">
+            <button class="primary" id="dictCheckBtn">检查</button>
+            <button class="secondary" id="dictNextBtn">换一题</button>
+            <button class="primary speak" id="dictSpeakBtn">听读音</button>
+          </div>
+          <div class="result" id="dictResult"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="quiz">
+        <div class="box">
+          <div class="badge-row">
+            <span class="badge b1" id="quizType"></span>
+            <span class="badge b3" id="quizScore"></span>
+          </div>
+          <div class="question" id="quizQuestion"></div>
+          <div id="quizArea"></div>
+          <div class="card-actions">
+            <button class="primary" id="quizCheckBtn">提交</button>
+            <button class="secondary" id="quizNextBtn">下一题</button>
+          </div>
+          <div class="result" id="quizResult"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="wrong">
+        <div class="box">
+          <div class="card-actions">
+            <button class="primary" id="wrongPracticeBtn">练习错题</button>
+            <button class="danger" id="clearWrongBtn">清空错题</button>
+          </div>
+          <div class="list" id="wrongList"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="progress">
+        <div class="stats">
+          <div class="stat"><span>已学单词</span><b id="learnedStat">0</b></div>
+          <div class="stat"><span>完成度</span><b id="doneStat">0%</b></div>
+          <div class="stat"><span>熟悉度</span><b id="masteryStat">0%</b></div>
+          <div class="stat"><span>错题数量</span><b id="wrongStat">0</b></div>
+        </div>
+        <canvas id="progressCanvas" width="900" height="260"></canvas>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const rawWords = [
+      ["star","明星，名角","名词","Unit 1","运动"],["ping-pong","乒乓球运动","名词","Unit 1","运动"],["band","圈，箍，带","名词","Unit 1","生活"],["fast","快地，快速地","副词","Unit 1","运动"],["report","报告，汇报","名词/动词","Unit 1","学习"],["wheelchair","轮椅","名词","Unit 1","生活"],["far","远","形容词/副词","Unit 1","位置"],["from","来自","介词","Unit 1","常用"],["very","很，非常","副词","Unit 1","常用"],["hurt","感到疼痛","动词","Unit 1","身体"],["think","想，思考","动词","Unit 1","常用"],["really","真的","副词","Unit 1","常用"],["wind","风","名词","Unit 1","自然"],["ride","骑，骑自行车","动词","Unit 1","运动"],
+      ["town","镇，城镇，市镇","名词","Unit 2","城市"],["train","火车，列车","名词","Unit 2","城市"],["station","车站；所；局","名词","Unit 2","城市"],["train station","火车站","名词短语","Unit 2","城市"],["supermarket","超级市场，超市","名词","Unit 2","城市"],["cinema","电影院","名词","Unit 2","城市"],["bus","公交车，公共汽车","名词","Unit 2","城市"],["stop","车站","名词","Unit 2","城市"],["bus stop","公交车站，公共汽车站","名词短语","Unit 2","城市"],["hospital","医院","名词","Unit 2","城市"],["police","警察","名词","Unit 2","职业"],["police station","警察局，派出所","名词短语","Unit 2","城市"],["shop","商店","名词","Unit 2","购物"],["first","先，首先","副词","Unit 2","方向"],["left","向左，朝左","副词","Unit 2","方向"],["then","接下来，然后","副词","Unit 2","方向"],["straight","笔直地，成直线地","副词","Unit 2","方向"],["turn","转弯；改变方向","动词","Unit 2","方向"],["there","在那里","副词","Unit 2","位置"],["excuse me","劳驾","交际用语","Unit 2","常用"],["way","路，道路","名词","Unit 2","方向"],["us","我们","代词","Unit 2","常用"],["thanks","谢谢你，多谢","交际用语","Unit 2","常用"],["buy","买，购买","动词","Unit 2","购物"],["our","我们的","代词","Unit 2","常用"],["writer","作家；作者","名词","Unit 2","职业"],["often","经常，时常","副词","Unit 2","常用"],["street","大街，街道","名词","Unit 2","城市"],["live","住，居住","动词","Unit 2","生活"],["place","地方，地点，场所","名词","Unit 2","城市"],["near","接近地，靠近地","副词","Unit 2","位置"],["map","地图","名词","Unit 2","方向"],
+      ["surprise","意想不到的事","名词","Unit 3","生活"],["everyone","每个人，人人","代词","Unit 3","常用"],["work","工作，干活","动词/名词","Unit 3","职业"],["restaurant","饭店，餐馆","名词","Unit 3","城市"],["hard","费劲地，费力地","副词","Unit 3","常用"],["teacher","教师","名词","Unit 3","职业"],["driver","司机，驾驶员","名词","Unit 3","职业"],["firefighter","消防队员","名词","Unit 3","职业"],["policeman","男警察","名词","Unit 3","职业"],["worker","工作人员","名词","Unit 3","职业"],["doctor","医生，大夫","名词","Unit 3","职业"],["nurse","护士","名词","Unit 3","职业"],["teach","教授，讲授","动词","Unit 3","学习"],["sick","生病的，患病的","形容词","Unit 3","身体"],["centre","中心","名词","Unit 3","城市"],["shape","形状，外形","名词","Unit 3","形状"],["gardener","园丁，花匠","名词","Unit 3","职业"],["garden","花园，园子","名词","Unit 3","自然"],["tall","高的，高大的","形容词","Unit 3","描述"],["cleaner","清洁工人","名词","Unit 3","职业"],["fire","火；火灾","名词","Unit 3","自然"],["animal","动物","名词","Unit 3","动物"],["grow","种植","动词","Unit 3","自然"],["taxi","出租车","名词","Unit 3","城市"],["drive","驾车送人","动词","Unit 3","城市"],["around","到处，四处","副词","Unit 3","位置"],["farmer","农民","名词","Unit 3","职业"],["science","科学","名词","Unit 3","学习"],["ask","问，提问","动词","Unit 3","学习"],["question","问题，疑问","名词","Unit 3","学习"],["astronaut","宇航员，太空人","名词","Unit 3","职业"],["learn","学习，学会","动词","Unit 3","学习"],["space","太空","名词","Unit 3","自然"],["moon","月亮，月球","名词","Unit 3","自然"],["scientist","科学家","名词","Unit 3","职业"],["because","因为","连词","Unit 3","常用"],["panda","大熊猫","名词","Unit 3","动物"],["keeper","饲养员","名词","Unit 3","职业"],["team","工作队，工作组","名词","Unit 3","生活"],["healthy","健康的，健壮的","形容词","Unit 3","身体"],["strong","强健的，力气大的","形容词","Unit 3","身体"],["house","房屋，房子","名词","Unit 3","生活"],["prepare","准备","动词","Unit 3","生活"],["kind","种，类","名词","Unit 3","常用"],["dream job","梦想中的工作","名词短语","Unit 3","职业"],
+      ["twenty","二十","数词","Unit 4","数字"],["twelve","十二","数词","Unit 4","数字"],["hundred","一百","数词","Unit 4","数字"],["zookeeper","动物园饲养员","名词","Unit 4","职业"],["bee","蜜蜂","名词","Unit 4","动物"],["flea market","跳蚤市场","名词短语","Unit 4","购物"],["skateboard","滑板","名词","Unit 4","运动"],["noon","正午，中午","名词","Unit 4","时间"],["skateboarding","滑板运动","名词","Unit 4","运动"],["friend","朋友，友人","名词","Unit 4","生活"],["bakery","面包店","名词","Unit 4","购物"],["flower","花，花朵","名词","Unit 4","自然"],["toy","玩具","名词","Unit 4","购物"],["pair","一双，一对","名词","Unit 4","购物"],["give","赠送，给予","动词","Unit 4","生活"],["spend","花销，花费","动词","Unit 4","购物"],["eighty","八十","数词","Unit 4","数字"],["nineteen","十九","数词","Unit 4","数字"],["sixteen","十六","数词","Unit 4","数字"],["sixty-six","六十六","数词","Unit 4","数字"],["forty-three","四十三","数词","Unit 4","数字"],["early","在早期，在初期","副词","Unit 4","时间"],["fifty","五十","数词","Unit 4","数字"],["yuan","元","名词","Unit 4","购物"],["thirty-three","三十三","数词","Unit 4","数字"],["forty-four","四十四","数词","Unit 4","数字"],["carrot","胡萝卜","名词","Unit 4","食物"],["thirteen","十三","数词","Unit 4","数字"],["seventy","七十","数词","Unit 4","数字"],["eleven","十一","数词","Unit 4","数字"],["thirty","三十","数词","Unit 4","数字"],["eighteen","十八","数词","Unit 4","数字"],["box","盒，匣，箱","名词","Unit 4","生活"],["use","使用","动词","Unit 4","常用"],["save","储蓄，存钱","动词","Unit 4","购物"],["holiday","假期，休假日","名词","Unit 4","时间"],["share","共享","动词","Unit 4","生活"],["money","钱","名词","Unit 4","购物"],["should","应当，应该","情态动词","Unit 4","常用"],
+      ["chocolate","巧克力","名词","Unit 5","食物"],["triangle","三角形","名词","Unit 5","形状"],["circle","圆形","名词","Unit 5","形状"],["rectangle","长方形，矩形","名词","Unit 5","形状"],["square","正方形","名词","Unit 5","形状"],["into","进入，到里面","介词","Unit 5","位置"],["tummy","肚子","名词","Unit 5","身体"],["yummy","美味的","形容词","Unit 5","食物"],["wheel","车轮","名词","Unit 5","生活"],["another","另一，又一","限定词","Unit 5","常用"],["a lot","大量，许多","短语","Unit 5","常用"],["its","它的","代词","Unit 5","常用"],["line","线，线条","名词","Unit 5","形状"],
+      ["zoo","动物园","名词","Unit 6","动物"],["sky","天，天空","名词","Unit 6","自然"],["neck","颈，脖子","名词","Unit 6","身体"],["brave","勇敢的","形容词","Unit 6","描述"],["heavy","重的","形容词","Unit 6","描述"],["giraffe","长颈鹿","名词","Unit 6","动物"],["lion","狮子","名词","Unit 6","动物"],["elephant","象","名词","Unit 6","动物"],["horse","马","名词","Unit 6","动物"],["pig","猪","名词","Unit 6","动物"],["sheep","羊，绵羊","名词","Unit 6","动物"],["cow","牛，奶牛","名词","Unit 6","动物"],["climb","攀登，爬","动词","Unit 6","运动"],["slow","慢的，缓慢的","形容词","Unit 6","描述"],["perfect","完美的","形容词","Unit 6","描述"],["pet","宠物","名词","Unit 6","动物"],["boy","男孩，少年","名词","Unit 6","生活"],["girl","女孩，小姑娘","名词","Unit 6","生活"],["hamster","仓鼠","名词","Unit 6","动物"],["cute","漂亮的，逗人喜爱的","形容词","Unit 6","描述"],["parrot","鹦鹉","名词","Unit 6","动物"],["city","城市，都市","名词","Unit 6","城市"],["party","聚会，宴会","名词","Unit 6","生活"],["gift","礼物","名词","Unit 6","生活"],["address","地址","名词","Unit 6","城市"],["snow","雪","名词","Unit 6","自然"],["knock","敲门窗","动词","Unit 6","生活"],["wolf","狼","名词","Unit 6","动物"],["paw","动物的爪子","名词","Unit 6","动物"],["hunter","猎人","名词","Unit 6","职业"],["talk","说话","动词","Unit 6","常用"],["animal shelter","动物收容所","名词短语","Unit 6","动物"],["catch","接住，接球","动词","Unit 6","运动"],["grass","草，青草","名词","Unit 6","自然"],["farm","农场，养殖场","名词","Unit 6","自然"],["tail","尾巴","名词","Unit 6","动物"],["bag","袋，包，囊","名词","Plays","生活"],["life","生命","名词","Plays","生活"],["story","故事","名词","Plays","学习"],["tie","系起来","动词","Plays","生活"],["never","决不，永不","副词","Plays","常用"],["trust","信任，相信","动词","Plays","生活"],["bad","坏的，不好的","形容词","Plays","描述"],["guy","家伙","名词","Plays","生活"],["sure","肯定的，确信的","形容词","Plays","常用"]
+    ];
+
+    const ipaMap = {
+      "star":"/stɑːr/","ping-pong":"/ˈpɪŋ pɒŋ/","band":"/bænd/","fast":"/fɑːst/","report":"/rɪˈpɔːrt/","wheelchair":"/ˈwiːltʃer/","far":"/fɑːr/","from":"/frəm/","very":"/ˈveri/","hurt":"/hɜːrt/","think":"/θɪŋk/","really":"/ˈriːəli/","wind":"/wɪnd/","ride":"/raɪd/","town":"/taʊn/","train":"/treɪn/","station":"/ˈsteɪʃən/","supermarket":"/ˈsuːpərmɑːrkɪt/","cinema":"/ˈsɪnəmə/","bus":"/bʌs/","stop":"/stɒp/","hospital":"/ˈhɒspɪtl/","police":"/pəˈliːs/","shop":"/ʃɒp/","first":"/fɜːrst/","left":"/left/","then":"/ðen/","straight":"/streɪt/","turn":"/tɜːrn/","there":"/ðer/","way":"/weɪ/","us":"/ʌs/","thanks":"/θæŋks/","buy":"/baɪ/","our":"/aʊər/","writer":"/ˈraɪtər/","often":"/ˈɔːfən/","street":"/striːt/","live":"/lɪv/","place":"/pleɪs/","near":"/nɪr/","map":"/mæp/","surprise":"/sərˈpraɪz/","everyone":"/ˈevriwʌn/","work":"/wɜːrk/","restaurant":"/ˈrestrɒnt/","hard":"/hɑːrd/","teacher":"/ˈtiːtʃər/","driver":"/ˈdraɪvər/","firefighter":"/ˈfaɪərfaɪtər/","policeman":"/pəˈliːsmən/","worker":"/ˈwɜːrkər/","doctor":"/ˈdɒktər/","nurse":"/nɜːrs/","teach":"/tiːtʃ/","sick":"/sɪk/","centre":"/ˈsentər/","shape":"/ʃeɪp/","garden":"/ˈɡɑːrdən/","tall":"/tɔːl/","fire":"/ˈfaɪər/","animal":"/ˈænɪməl/","grow":"/ɡroʊ/","taxi":"/ˈtæksi/","drive":"/draɪv/","around":"/əˈraʊnd/","farmer":"/ˈfɑːrmər/","science":"/ˈsaɪəns/","ask":"/æsk/","question":"/ˈkwestʃən/","astronaut":"/ˈæstrənɔːt/","learn":"/lɜːrn/","space":"/speɪs/","moon":"/muːn/","scientist":"/ˈsaɪəntɪst/","because":"/bɪˈkɔːz/","panda":"/ˈpændə/","team":"/tiːm/","healthy":"/ˈhelθi/","strong":"/strɒŋ/","house":"/haʊs/","prepare":"/prɪˈper/","kind":"/kaɪnd/","twenty":"/ˈtwenti/","twelve":"/twelv/","hundred":"/ˈhʌndrəd/","bee":"/biː/","skateboard":"/ˈskeɪtbɔːrd/","noon":"/nuːn/","friend":"/frend/","bakery":"/ˈbeɪkəri/","flower":"/ˈflaʊər/","toy":"/tɔɪ/","pair":"/per/","give":"/ɡɪv/","spend":"/spend/","money":"/ˈmʌni/","should":"/ʃʊd/","chocolate":"/ˈtʃɒklət/","triangle":"/ˈtraɪæŋɡl/","circle":"/ˈsɜːrkl/","rectangle":"/ˈrektæŋɡl/","square":"/skwer/","into":"/ˈɪntuː/","tummy":"/ˈtʌmi/","yummy":"/ˈjʌmi/","wheel":"/wiːl/","another":"/əˈnʌðər/","line":"/laɪn/","zoo":"/zuː/","sky":"/skaɪ/","neck":"/nek/","brave":"/breɪv/","heavy":"/ˈhevi/","giraffe":"/dʒəˈræf/","lion":"/ˈlaɪən/","elephant":"/ˈelɪfənt/","horse":"/hɔːrs/","pig":"/pɪɡ/","sheep":"/ʃiːp/","cow":"/kaʊ/","climb":"/klaɪm/","slow":"/sloʊ/","perfect":"/ˈpɜːrfɪkt/","pet":"/pet/","boy":"/bɔɪ/","girl":"/ɡɜːrl/","hamster":"/ˈhæmstər/","cute":"/kjuːt/","parrot":"/ˈpærət/","city":"/ˈsɪti/","party":"/ˈpɑːrti/","gift":"/ɡɪft/","address":"/əˈdres/","snow":"/snoʊ/","knock":"/nɒk/","wolf":"/wʊlf/","paw":"/pɔː/","hunter":"/ˈhʌntər/","talk":"/tɔːk/","catch":"/kætʃ/","grass":"/ɡræs/","farm":"/fɑːrm/","tail":"/teɪl/","bag":"/bæɡ/","life":"/laɪf/","story":"/ˈstɔːri/","tie":"/taɪ/","never":"/ˈnevər/","trust":"/trʌst/","bad":"/bæd/","guy":"/ɡaɪ/","sure":"/ʃʊr/"
+    };
+
+    const data = rawWords.map((item, index) => {
+      const [word, meaning, pos, unit, category] = item;
+      const sample = word.includes(" ") ? word : word;
+      return {
+        id: index + 1,
+        word, meaning, pos, unit, category,
+        ipa: ipaMap[word] || "/" + word.replaceAll(" ", " ") + "/",
+        example: makeExample(sample, category)
+      };
+    });
+
+    function makeExample(word, category) {
+      const templates = {
+        "动物": `I can see a ${word} at the zoo.`,
+        "职业": `My dream job is ${article(word)} ${word}.`,
+        "城市": `The ${word} is near my home.`,
+        "购物": `I want to buy a ${word}.`,
+        "形状": `I can draw a ${word}.`,
+        "数字": `I count ${word} stars.`,
+        "运动": `I like ${word}.`,
+        "食物": `The ${word} is yummy.`,
+        "自然": `Look at the ${word}.`,
+        "身体": `My ${word} is strong.`,
+        "方向": `Please ${word} here.`,
+        "位置": `It is ${word}.`,
+        "时间": `We meet at ${word}.`,
+        "学习": `We learn the word ${word}.`,
+        "描述": `It is ${word}.`,
+        "常用": `I can use ${word} in a sentence.`,
+        "生活": `This is my ${word}.`
+      };
+      return templates[category] || `I know the word ${word}.`;
+    }
+    function article(word) {
+      return /^[aeiou]/i.test(word) ? "an" : "a";
+    }
+
+    const storeKey = "grade4JoinWords";
+    const state = JSON.parse(localStorage.getItem(storeKey) || "{}");
+    state.daily = state.daily || 15;
+    state.category = state.category || "全部";
+    state.learned = state.learned || {};
+    state.wrong = state.wrong || {};
+    state.history = state.history || [];
+    state.todayIds = state.todayIds || [];
+    state.todayDate = state.todayDate || "";
+    let currentIndex = 0;
+    let dictWord = null;
+    let quiz = null;
+    let quizStats = { right: 0, total: 0 };
+
+    const $ = (id) => document.getElementById(id);
+    const unitOrder = ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Plays"];
+    const categories = ["全部", ...unitOrder.filter(unit => data.some(w => w.unit === unit))];
+    if (!categories.includes(state.category)) state.category = "全部";
+    $("categorySelect").innerHTML = categories.map(c => `<option>${c}</option>`).join("");
+    $("dailyInput").value = state.daily;
+    $("categorySelect").value = state.category;
+
+    function save() { localStorage.setItem(storeKey, JSON.stringify(state)); }
+    function filtered() {
+      return data.filter(w => state.category === "全部" || w.unit === state.category);
+    }
+    function todayString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+    function makePlan() {
+      state.todayDate = todayString();
+      const pool = [...filtered()].sort((a,b) => (state.learned[a.id]?.known || 0) - (state.learned[b.id]?.known || 0));
+      state.todayIds = pool.slice(0, Math.min(state.daily, pool.length)).map(w => w.id);
+      currentIndex = 0;
+      save();
+      renderAll();
+    }
+    function todayWords() {
+      if (state.todayDate !== todayString() || !state.todayIds.length) makePlan();
+      const ids = new Set(state.todayIds);
+      return data.filter(w => ids.has(w.id));
+    }
+    function activePool() {
+      const t = todayWords();
+      return t.length ? t : filtered();
+    }
+    function currentWord() {
+      const pool = activePool();
+      return pool[currentIndex % pool.length] || data[0];
+    }
+    function speak(text) {
+      if (!("speechSynthesis" in window)) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US";
+      u.rate = .78;
+      speechSynthesis.speak(u);
+    }
+    function markLearned(word, known, source = "学习复习") {
+      const rec = state.learned[word.id] || { seen: 0, known: 0, wrong: 0 };
+      rec.seen += 1;
+      if (known) rec.known += 1; else rec.wrong += 1;
+      state.learned[word.id] = rec;
+      if (!known) addWrong(word, source);
+      pushHistory();
+      save();
+      renderAll();
+    }
+    function addWrong(word, type) {
+      state.wrong[word.id] = { wordId: word.id, type, time: Date.now() };
+    }
+    function removeWrong(id) {
+      delete state.wrong[id];
+      save();
+      renderWrong();
+      renderProgress();
+    }
+    function pushHistory() {
+      const learnedCount = Object.keys(state.learned).length;
+      const mastery = getMastery();
+      state.history.push({ date: new Date().toLocaleDateString("zh-CN"), learnedCount, mastery });
+      state.history = state.history.slice(-14);
+    }
+    function getMastery() {
+      const recs = Object.values(state.learned);
+      if (!recs.length) return 0;
+      const score = recs.reduce((sum, r) => sum + (r.known / Math.max(1, r.seen)), 0) / recs.length;
+      return Math.round(score * 100);
+    }
+    function renderStudy() {
+      const w = currentWord();
+      $("unitBadge").textContent = w.unit;
+      $("catBadge").textContent = w.category;
+      $("posBadge").textContent = w.pos;
+      $("wordText").textContent = w.word;
+      $("ipaText").textContent = w.ipa;
+      $("meaningText").textContent = w.meaning;
+      $("exampleText").textContent = w.example;
+      const t = todayWords();
+      const done = t.filter(x => state.learned[x.id]?.seen).length;
+      $("dailyMeter").style.width = `${t.length ? Math.round(done / t.length * 100) : 0}%`;
+      $("dailyText").textContent = `${done}/${t.length} 个`;
+      $("todayBtn").textContent = `今日 ${done}/${t.length}`;
+      $("categoryChips").innerHTML = categories.map(c => `<button class="chip ${c===state.category ? "on":""}" data-cat="${c}">${c}</button>`).join("");
+      document.querySelectorAll(".chip").forEach(btn => btn.onclick = () => {
+        state.category = btn.dataset.cat;
+        $("categorySelect").value = state.category;
+        makePlan();
+      });
+    }
+    function nextWord() {
+      const pool = activePool();
+      currentIndex = (currentIndex + 1) % Math.max(1, pool.length);
+      renderStudy();
+    }
+    function randomWord(pool = activePool()) {
+      return pool[Math.floor(Math.random() * pool.length)] || data[0];
+    }
+    function makeHint(word) {
+      const clean = word.word;
+      const letters = clean.replace(/[^a-z]/gi, "");
+      const keep = Math.max(1, Math.ceil(letters.length / 5));
+      let seen = 0;
+      return clean.split("").map(ch => {
+        if (!/[a-z]/i.test(ch)) return ch;
+        seen += 1;
+        return seen <= keep ? ch : "_";
+      }).join(" ");
+    }
+    function newDictation() {
+      dictWord = randomWord();
+      $("dictMeaning").textContent = dictWord.meaning;
+      $("dictHint").textContent = makeHint(dictWord);
+      $("dictInput").value = "";
+      $("dictResult").textContent = "";
+      $("dictInput").focus();
+    }
+    function checkDictation() {
+      const answer = $("dictInput").value.trim().toLowerCase();
+      const ok = answer === dictWord.word.toLowerCase();
+      $("dictResult").textContent = ok ? "答对了，太棒了！" : `还差一点：${dictWord.word}`;
+      markLearned(dictWord, ok, "单词默写");
+      save();
+    }
+    function newQuiz() {
+      const types = ["选择题", "填空题", "拼写题"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const answer = randomWord();
+      quiz = { type, answer, locked: false };
+      $("quizType").textContent = type;
+      $("quizScore").textContent = `得分 ${quizStats.right}/${quizStats.total}`;
+      $("quizResult").textContent = "";
+      if (type === "选择题") {
+        $("quizQuestion").textContent = `请选择“${answer.meaning}”对应的英文`;
+        const others = data.filter(w => w.id !== answer.id).sort(() => Math.random() - .5).slice(0,3);
+        const opts = [answer, ...others].sort(() => Math.random() - .5);
+        $("quizArea").innerHTML = `<div class="options">${opts.map(o => `<button class="option" data-id="${o.id}">${o.word}</button>`).join("")}</div>`;
+        document.querySelectorAll(".option").forEach(btn => btn.onclick = () => {
+          document.querySelectorAll(".option").forEach(b => b.classList.remove("good","bad"));
+          btn.classList.add(Number(btn.dataset.id) === answer.id ? "good" : "bad");
+          quiz.choice = Number(btn.dataset.id);
+        });
+      } else if (type === "填空题") {
+        $("quizQuestion").textContent = `补全单词：${answer.meaning}  ${makeHint(answer)}`;
+        $("quizArea").innerHTML = `<input id="quizInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="输入完整英文">`;
+      } else {
+        $("quizQuestion").textContent = `听读音，拼写这个单词`;
+        $("quizArea").innerHTML = `<input id="quizInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="输入听到的英文"><button class="primary speak" id="quizSpeakBtn" style="margin-top:10px">朗读</button>`;
+        $("quizSpeakBtn").onclick = () => speak(answer.word);
+        setTimeout(() => speak(answer.word), 300);
+      }
+    }
+    function checkQuiz() {
+      if (!quiz || quiz.locked) return;
+      let ok = false;
+      if (quiz.type === "选择题") ok = quiz.choice === quiz.answer.id;
+      else ok = ($("quizInput")?.value || "").trim().toLowerCase() === quiz.answer.word.toLowerCase();
+      quiz.locked = true;
+      quizStats.total += 1;
+      if (ok) quizStats.right += 1;
+      $("quizScore").textContent = `得分 ${quizStats.right}/${quizStats.total}`;
+      $("quizResult").textContent = ok ? "答对了！" : `答案是：${quiz.answer.word}`;
+      markLearned(quiz.answer, ok, "小测验");
+      save();
+    }
+    function renderWrong() {
+      const ids = Object.keys(state.wrong).map(Number);
+      if (!ids.length) {
+        $("wrongList").innerHTML = `<div class="empty">错题本现在是空的。</div>`;
+        return;
+      }
+      $("wrongList").innerHTML = ids.map(id => {
+        const w = data.find(x => x.id === id);
+        const rec = state.wrong[id];
+        if (!w) return "";
+        return `<div class="row"><div><strong>${w.word}</strong><span>${w.meaning} · ${w.pos} · ${rec.type}</span></div><button class="secondary" data-remove="${id}">已掌握</button></div>`;
+      }).join("");
+      document.querySelectorAll("[data-remove]").forEach(btn => btn.onclick = () => removeWrong(btn.dataset.remove));
+    }
+    function renderProgress() {
+      const learned = Object.keys(state.learned).length;
+      $("learnedStat").textContent = learned;
+      $("doneStat").textContent = `${Math.round(learned / data.length * 100)}%`;
+      $("masteryStat").textContent = `${getMastery()}%`;
+      $("wrongStat").textContent = Object.keys(state.wrong).length;
+      drawProgress();
+    }
+    function drawProgress() {
+      const canvas = $("progressCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.strokeStyle = "#dfe7f7";
+      ctx.lineWidth = 2;
+      for (let i=1;i<5;i++) {
+        const y = i * canvas.height / 5;
+        ctx.beginPath(); ctx.moveTo(34,y); ctx.lineTo(canvas.width-20,y); ctx.stroke();
+      }
+      const hist = state.history.length ? state.history : [{date:"今天", mastery:getMastery()}];
+      const points = hist.map((h,i) => {
+        const x = 44 + i * ((canvas.width - 84) / Math.max(1, hist.length - 1));
+        const y = canvas.height - 34 - (h.mastery || 0) / 100 * (canvas.height - 64);
+        return [x,y,h];
+      });
+      ctx.strokeStyle = "#20a85a";
+      ctx.lineWidth = 6;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      points.forEach(([x,y],i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+      ctx.stroke();
+      points.forEach(([x,y,h]) => {
+        ctx.fillStyle = "#2278ff";
+        ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#182033";
+        ctx.font = "18px sans-serif";
+        ctx.fillText(`${h.mastery || 0}%`, x - 16, y - 14);
+      });
+      ctx.fillStyle = "#677089";
+      ctx.font = "18px sans-serif";
+      ctx.fillText("熟悉度曲线", 34, 28);
+    }
+    function renderAll() {
+      renderStudy();
+      renderWrong();
+      renderProgress();
+    }
+
+    document.querySelectorAll(".tab").forEach(btn => btn.onclick = () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      $(btn.dataset.tab).classList.add("active");
+      if (btn.dataset.tab === "dictation") newDictation();
+      if (btn.dataset.tab === "quiz") newQuiz();
+      if (btn.dataset.tab === "wrong") renderWrong();
+      if (btn.dataset.tab === "progress") renderProgress();
+    });
+    $("categorySelect").onchange = () => { state.category = $("categorySelect").value; makePlan(); };
+    $("dailyInput").onchange = () => { state.daily = Math.max(5, Math.min(80, Number($("dailyInput").value) || 15)); $("dailyInput").value = state.daily; makePlan(); };
+    $("newPlanBtn").onclick = makePlan;
+    $("speakBtn").onclick = () => speak(currentWord().word);
+    $("knownBtn").onclick = () => { markLearned(currentWord(), true); nextWord(); };
+    $("againBtn").onclick = () => { markLearned(currentWord(), false); speak(currentWord().word); };
+    $("nextBtn").onclick = nextWord;
+    $("dictCheckBtn").onclick = checkDictation;
+    $("dictNextBtn").onclick = newDictation;
+    $("dictSpeakBtn").onclick = () => speak(dictWord.word);
+    $("quizCheckBtn").onclick = checkQuiz;
+    $("quizNextBtn").onclick = newQuiz;
+    $("wrongPracticeBtn").onclick = () => {
+      const ids = Object.keys(state.wrong).map(Number);
+      if (ids.length) {
+        state.todayIds = ids;
+        currentIndex = 0;
+        save();
+        document.querySelector('[data-tab="study"]').click();
+      }
+    };
+    $("clearWrongBtn").onclick = () => {
+      if (confirm("确定清空错题本吗？")) {
+        state.wrong = {};
+        save();
+        renderAll();
+      }
+    };
+    $("todayBtn").onclick = () => document.querySelector('[data-tab="progress"]').click();
+    window.addEventListener("resize", renderProgress);
+    if (!state.todayIds.length) makePlan();
+    renderAll();
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
