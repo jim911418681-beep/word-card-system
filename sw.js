@@ -1,7 +1,8 @@
-const CACHE_NAME = "word-card-system-v3";
+const CACHE_NAME = "word-card-system-v6";
 const APP_SHELL = [
   "./",
-  "./word-card-system.html",
+  "./index.html",
+  "./word-bank-grade3-term2.js",
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -34,7 +35,7 @@ self.addEventListener("fetch", (event) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
-      }).catch(() => caches.match("./word-card-system.html"));
+      }).catch(() => caches.match("./index.html"));
     })
   );
 });

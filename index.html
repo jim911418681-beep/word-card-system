@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>四年级上册英语单词卡片</title>
-  <meta name="description" content="四年级上册英语单词学习、默写、小测验、错题本和学习进度工具">
+  <title>大卫英语</title>
+  <meta name="description" content="大卫英语：英语单词学习、默写、小测验、错题本和学习进度工具">
   <meta name="theme-color" content="#2278ff">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="英语单词卡">
+  <meta name="apple-mobile-web-app-title" content="大卫英语">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
@@ -76,7 +76,7 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      overflow-x: auto ;
+      overflow-x: auto;
       padding-bottom: 2px;
     }
     .tab {
@@ -97,7 +97,7 @@
     .tab[data-tab="progress"].active { background: var(--cyan); }
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(130px, 1fr) minmax(110px, .65fr) auto;
+      grid-template-columns: minmax(150px, 1fr) minmax(130px, 1fr) minmax(110px, .65fr) auto;
       gap: 10px;
       align-items: center;
       background: rgba(255,255,255,.78);
@@ -275,7 +275,7 @@
   <div class="app">
     <header>
       <div class="titlebar">
-        <h1>四年级上册英语单词卡片</h1>
+        <h1 id="appTitle">大卫英语</h1>
         <button class="today" id="todayBtn">今日任务</button>
       </div>
       <nav class="tabs" aria-label="功能">
@@ -286,6 +286,9 @@
         <button class="tab" data-tab="progress">学习进度</button>
       </nav>
       <section class="toolbar">
+        <label>教材版本
+          <select id="gradeSelect"></select>
+        </label>
         <label>学习单元
           <select id="categorySelect"></select>
         </label>
@@ -379,6 +382,7 @@
     </main>
   </div>
 
+  <script src="./word-bank-grade3-term2.js"></script>
   <script>
     const rawWords = [
       ["star","明星，名角","名词","Unit 1","运动"],["ping-pong","乒乓球运动","名词","Unit 1","运动"],["band","圈，箍，带","名词","Unit 1","生活"],["fast","快地，快速地","副词","Unit 1","运动"],["report","报告，汇报","名词/动词","Unit 1","学习"],["wheelchair","轮椅","名词","Unit 1","生活"],["far","远","形容词/副词","Unit 1","位置"],["from","来自","介词","Unit 1","常用"],["very","很，非常","副词","Unit 1","常用"],["hurt","感到疼痛","动词","Unit 1","身体"],["think","想，思考","动词","Unit 1","常用"],["really","真的","副词","Unit 1","常用"],["wind","风","名词","Unit 1","自然"],["ride","骑，骑自行车","动词","Unit 1","运动"],
@@ -393,16 +397,30 @@
       "star":"/stɑːr/","ping-pong":"/ˈpɪŋ pɒŋ/","band":"/bænd/","fast":"/fɑːst/","report":"/rɪˈpɔːrt/","wheelchair":"/ˈwiːltʃer/","far":"/fɑːr/","from":"/frəm/","very":"/ˈveri/","hurt":"/hɜːrt/","think":"/θɪŋk/","really":"/ˈriːəli/","wind":"/wɪnd/","ride":"/raɪd/","town":"/taʊn/","train":"/treɪn/","station":"/ˈsteɪʃən/","supermarket":"/ˈsuːpərmɑːrkɪt/","cinema":"/ˈsɪnəmə/","bus":"/bʌs/","stop":"/stɒp/","hospital":"/ˈhɒspɪtl/","police":"/pəˈliːs/","shop":"/ʃɒp/","first":"/fɜːrst/","left":"/left/","then":"/ðen/","straight":"/streɪt/","turn":"/tɜːrn/","there":"/ðer/","way":"/weɪ/","us":"/ʌs/","thanks":"/θæŋks/","buy":"/baɪ/","our":"/aʊər/","writer":"/ˈraɪtər/","often":"/ˈɔːfən/","street":"/striːt/","live":"/lɪv/","place":"/pleɪs/","near":"/nɪr/","map":"/mæp/","surprise":"/sərˈpraɪz/","everyone":"/ˈevriwʌn/","work":"/wɜːrk/","restaurant":"/ˈrestrɒnt/","hard":"/hɑːrd/","teacher":"/ˈtiːtʃər/","driver":"/ˈdraɪvər/","firefighter":"/ˈfaɪərfaɪtər/","policeman":"/pəˈliːsmən/","worker":"/ˈwɜːrkər/","doctor":"/ˈdɒktər/","nurse":"/nɜːrs/","teach":"/tiːtʃ/","sick":"/sɪk/","centre":"/ˈsentər/","shape":"/ʃeɪp/","garden":"/ˈɡɑːrdən/","tall":"/tɔːl/","fire":"/ˈfaɪər/","animal":"/ˈænɪməl/","grow":"/ɡroʊ/","taxi":"/ˈtæksi/","drive":"/draɪv/","around":"/əˈraʊnd/","farmer":"/ˈfɑːrmər/","science":"/ˈsaɪəns/","ask":"/æsk/","question":"/ˈkwestʃən/","astronaut":"/ˈæstrənɔːt/","learn":"/lɜːrn/","space":"/speɪs/","moon":"/muːn/","scientist":"/ˈsaɪəntɪst/","because":"/bɪˈkɔːz/","panda":"/ˈpændə/","team":"/tiːm/","healthy":"/ˈhelθi/","strong":"/strɒŋ/","house":"/haʊs/","prepare":"/prɪˈper/","kind":"/kaɪnd/","twenty":"/ˈtwenti/","twelve":"/twelv/","hundred":"/ˈhʌndrəd/","bee":"/biː/","skateboard":"/ˈskeɪtbɔːrd/","noon":"/nuːn/","friend":"/frend/","bakery":"/ˈbeɪkəri/","flower":"/ˈflaʊər/","toy":"/tɔɪ/","pair":"/per/","give":"/ɡɪv/","spend":"/spend/","money":"/ˈmʌni/","should":"/ʃʊd/","chocolate":"/ˈtʃɒklət/","triangle":"/ˈtraɪæŋɡl/","circle":"/ˈsɜːrkl/","rectangle":"/ˈrektæŋɡl/","square":"/skwer/","into":"/ˈɪntuː/","tummy":"/ˈtʌmi/","yummy":"/ˈjʌmi/","wheel":"/wiːl/","another":"/əˈnʌðər/","line":"/laɪn/","zoo":"/zuː/","sky":"/skaɪ/","neck":"/nek/","brave":"/breɪv/","heavy":"/ˈhevi/","giraffe":"/dʒəˈræf/","lion":"/ˈlaɪən/","elephant":"/ˈelɪfənt/","horse":"/hɔːrs/","pig":"/pɪɡ/","sheep":"/ʃiːp/","cow":"/kaʊ/","climb":"/klaɪm/","slow":"/sloʊ/","perfect":"/ˈpɜːrfɪkt/","pet":"/pet/","boy":"/bɔɪ/","girl":"/ɡɜːrl/","hamster":"/ˈhæmstər/","cute":"/kjuːt/","parrot":"/ˈpærət/","city":"/ˈsɪti/","party":"/ˈpɑːrti/","gift":"/ɡɪft/","address":"/əˈdres/","snow":"/snoʊ/","knock":"/nɒk/","wolf":"/wʊlf/","paw":"/pɔː/","hunter":"/ˈhʌntər/","talk":"/tɔːk/","catch":"/kætʃ/","grass":"/ɡræs/","farm":"/fɑːrm/","tail":"/teɪl/","bag":"/bæɡ/","life":"/laɪf/","story":"/ˈstɔːri/","tie":"/taɪ/","never":"/ˈnevər/","trust":"/trʌst/","bad":"/bæd/","guy":"/ɡaɪ/","sure":"/ʃʊr/"
     };
 
-    const data = rawWords.map((item, index) => {
-      const [word, meaning, pos, unit, category] = item;
-      const sample = word.includes(" ") ? word : word;
-      return {
-        id: index + 1,
-        word, meaning, pos, unit, category,
-        ipa: ipaMap[word] || "/" + word.replaceAll(" ", " ") + "/",
-        example: makeExample(sample, category)
-      };
-    });
+    const wordBanks = {
+      grade4Term1: {
+        label: "四年级上册",
+        rawWords
+      },
+      grade3Term2: {
+        label: "三年级下册",
+        rawWords: globalThis.grade3Term2RawWords || []
+      }
+    };
+
+    function buildData(bankKey) {
+      const bank = wordBanks[bankKey] || wordBanks.grade4Term1;
+      return bank.rawWords.map((item, index) => {
+        const [word, meaning, pos, unit, category, providedIpa, providedExample] = item;
+        const sample = word.includes(" ") ? word : word;
+        return {
+          id: index + 1,
+          word, meaning, pos, unit, category,
+          ipa: item.length >= 6 ? providedIpa : (ipaMap[word] || "/" + word.replaceAll(" ", " ") + "/"),
+          example: item.length >= 7 ? providedExample : makeExample(sample, category)
+        };
+      });
+    }
 
     function makeExample(word, category) {
       const templates = {
@@ -430,15 +448,10 @@
       return /^[aeiou]/i.test(word) ? "an" : "a";
     }
 
-    const storeKey = "grade4JoinWords";
-    const state = JSON.parse(localStorage.getItem(storeKey) || "{}");
-    state.daily = state.daily || 15;
-    state.category = state.category || "全部";
-    state.learned = state.learned || {};
-    state.wrong = state.wrong || {};
-    state.history = state.history || [];
-    state.todayIds = state.todayIds || [];
-    state.todayDate = state.todayDate || "";
+    const activeBankKey = localStorage.getItem("wordCardActiveBank") || "grade4Term1";
+    let currentBankKey = wordBanks[activeBankKey] ? activeBankKey : "grade4Term1";
+    let data = buildData(currentBankKey);
+    let state = loadState();
     let currentIndex = 0;
     let dictWord = null;
     let quiz = null;
@@ -446,13 +459,51 @@
 
     const $ = (id) => document.getElementById(id);
     const unitOrder = ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Plays"];
-    const categories = ["全部", ...unitOrder.filter(unit => data.some(w => w.unit === unit))];
-    if (!categories.includes(state.category)) state.category = "全部";
-    $("categorySelect").innerHTML = categories.map(c => `<option>${c}</option>`).join("");
-    $("dailyInput").value = state.daily;
-    $("categorySelect").value = state.category;
+    let categories = getCategories();
+    $("gradeSelect").innerHTML = Object.entries(wordBanks).map(([key, bank]) => `<option value="${key}">${bank.label}</option>`).join("");
+    $("gradeSelect").value = currentBankKey;
+    syncControls();
 
-    function save() { localStorage.setItem(storeKey, JSON.stringify(state)); }
+    function stateKey() { return `wordCardState:${currentBankKey}`; }
+    function loadState() {
+      const nextState = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+      nextState.daily = nextState.daily || 15;
+      nextState.category = nextState.category || "全部";
+      nextState.learned = nextState.learned || {};
+      nextState.wrong = nextState.wrong || {};
+      nextState.history = nextState.history || [];
+      nextState.todayIds = nextState.todayIds || [];
+      nextState.todayDate = nextState.todayDate || "";
+      return nextState;
+    }
+    function save() { localStorage.setItem(stateKey(), JSON.stringify(state)); }
+    function getCategories() {
+      return ["全部", ...unitOrder.filter(unit => data.some(w => w.unit === unit))];
+    }
+    function syncControls() {
+      categories = getCategories();
+      if (!categories.includes(state.category)) state.category = "全部";
+      $("appTitle").textContent = "大卫英语";
+      document.title = "大卫英语";
+      $("gradeSelect").value = currentBankKey;
+      $("categorySelect").innerHTML = categories.map(c => `<option>${c}</option>`).join("");
+      $("categorySelect").value = state.category;
+      $("dailyInput").value = state.daily;
+      save();
+    }
+    function switchBank(bankKey) {
+      if (!wordBanks[bankKey] || bankKey === currentBankKey) return;
+      currentBankKey = bankKey;
+      localStorage.setItem("wordCardActiveBank", currentBankKey);
+      data = buildData(currentBankKey);
+      state = loadState();
+      currentIndex = 0;
+      dictWord = null;
+      quiz = null;
+      quizStats = { right: 0, total: 0 };
+      syncControls();
+      makePlan();
+    }
     function filtered() {
       return data.filter(w => state.category === "全部" || w.unit === state.category);
     }
@@ -689,6 +740,7 @@
       if (btn.dataset.tab === "wrong") renderWrong();
       if (btn.dataset.tab === "progress") renderProgress();
     });
+    $("gradeSelect").onchange = () => switchBank($("gradeSelect").value);
     $("categorySelect").onchange = () => { state.category = $("categorySelect").value; makePlan(); };
     $("dailyInput").onchange = () => { state.daily = Math.max(5, Math.min(80, Number($("dailyInput").value) || 15)); $("dailyInput").value = state.daily; makePlan(); };
     $("newPlanBtn").onclick = makePlan;

@@ -1,10 +1,10 @@
 {
-  "name": "四年级上册英语单词卡片",
-  "short_name": "英语单词卡",
+  "name": "大卫英语",
+  "short_name": "大卫英语",
   "description": "适合手机和 iPad 使用的英语单词学习、默写、小测验、错题本和学习进度工具。",
   "lang": "zh-CN",
   "dir": "ltr",
-  "start_url": "./word-card-system.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
